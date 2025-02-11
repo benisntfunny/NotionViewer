@@ -1,7 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Location } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-
+import { environment } from '../environments/environment';
+import { Title } from '@angular/platform-browser';
 @Component({
   selector: 'app-root',
   standalone: true,
@@ -18,14 +19,24 @@ import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit, OnDestroy {
-  defaultPath = '/ebd/1965592d026180c68db6d84fb603011f';
+  siteTitle = environment.siteTitle;
+  defaultPath = environment.defaultPath;
   path: string = this.defaultPath;
-  baseUrl = 'https://benisntfunny.notion.site';
+  baseUrl = environment.baseUrl;
   safeIframeUrl: SafeResourceUrl;
   messageListener: ((event: MessageEvent) => void) | undefined = undefined;
 
-  constructor(private location: Location, private sanitizer: DomSanitizer) {
+  constructor(
+    private location: Location,
+    private sanitizer: DomSanitizer,
+    private titleService: Title
+  ) {
     this.safeIframeUrl = this.sanitizeUrl(`${this.baseUrl}${this.path}`);
+    this.setTitle(this.siteTitle);
+  }
+
+  setTitle(newTitle: string) {
+    this.titleService.setTitle(newTitle);
   }
 
   ngOnInit() {
